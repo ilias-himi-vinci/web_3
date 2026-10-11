@@ -8,9 +8,9 @@ import type { Expense } from "../types/Expense.ts";
 
 const router = Router();
 
-router.get("/expenses", (req, res) => {
+router.get("/expenses", async (req, res) => {
   try {
-    const expenses = getAllExpenses();
+    const expenses = await getAllExpenses();
 
     res.json(expenses);
   } catch (error: unknown) {
@@ -22,11 +22,11 @@ router.get("/expenses", (req, res) => {
   }
 });
 
-router.post("/expenses", (req, res) => {
+router.post("/expenses", async (req, res) => {
   try {
     const expense = req.body as Expense;
 
-    const createdExpense = addExpense(expense);
+    const createdExpense = await addExpense(expense);
 
     res.status(201).json(createdExpense);
   } catch (error: unknown) {
