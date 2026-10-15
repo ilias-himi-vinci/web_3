@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { Expense } from "../types/Expense";
+import type { Expense, NewExpense } from "../types/Expense";
 const host =
   import.meta.env.VITE_API_URL || "http://unknown-api-url.com";
 
@@ -39,7 +39,7 @@ function useExpenses() {
     fetchExpenses();
   }, []);
 
-  const addExpense = async (expense: Expense) => {
+  const addExpense = async (expense: NewExpense) => {
     try {
       setError(null);
 
