@@ -5,6 +5,7 @@ export interface Expense {
   date: string;
   description: string;
   payerId: number;
+  categoryId?: number | null;
   amount: number;
   participants: number[];
 }
@@ -15,6 +16,7 @@ export const ExpenseFormSchema = z.object({
   payerId: z.union([z.literal(1), z.literal(2)], {
     message: "Le payeur doit être Alice ou Bob.",
   }),
+  categoryId: z.number().nullable().optional(),
   date: z.string().min(1, "La date est obligatoire."),
   description: z
     .string()
@@ -25,3 +27,16 @@ export const ExpenseFormSchema = z.object({
 });
 
 export type ExpenseFormValues = z.infer<typeof ExpenseFormSchema>;
+
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  bankAccount: string | null;
+}
+
+export interface Category {
+  id: number;
+  name: string;
+  color: string;
+}

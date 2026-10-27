@@ -5,12 +5,25 @@ import {
   resetExpenses,
 } from "../services/expenses.ts";
 import type { NewExpense } from "../types/Expense.ts";
+import z from "zod";
 
 const router = Router();
 
+const expenseFilterSchema = z.object({
+  amount: z.coerce.number().nonnegative().optional(),
+  payerId: z.coerce.number().int().positive().optional(),
+  categoryId: z.coerce.number().int().positive().optional(),
+});
+
 router.get("/expenses", async (req, res) => {
+  const parsed = expenseFilterSchema.safeParse(req.query);
+
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Invalid amount" });
+  }
+
   try {
-    const expenses = await getAllExpenses();
+    const expenses = await getAllExpenses(parsed.data);
     res.json(expenses);
   } catch (error: unknown) {
     console.error(error);

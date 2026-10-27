@@ -3,6 +3,7 @@ export interface Expense {
   date: string;
   description: string;
   payerId: number;
+  categoryId?: number | null;
   amount: number;
   participants: number[];
 }

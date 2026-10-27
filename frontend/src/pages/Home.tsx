@@ -2,17 +2,23 @@ import { useState } from "react";
 import ExpenseAdd from "../components/ExpenseAdd";
 import ExpenseItem from "../components/ExpenseItem";
 import useExpenses from "../hooks/useExpenses";
+import ExpenseSearch from "../components/ExpenseSearch";
+import type { ExpenseFilter } from "../hooks/useExpenses";
+import useCategories from "../hooks/useCategories";
+
+
 
 function Home() {
-  const {
-    expenses,
-    loading,
-    error,
-    addExpense,
-    resetExpenses,
-  } = useExpenses();
+  const { categories } = useCategories();
+  const [filter, setFilter] = useState<ExpenseFilter>({});
+
+  const { expenses, loading, error, addExpense, resetExpenses } =
+    useExpenses(filter);
+    
 
   const [resetMessage, setResetMessage] = useState("");
+
+  
 
   const handleReset = async () => {
     await resetExpenses();
@@ -33,6 +39,8 @@ function Home() {
 
       <ExpenseAdd addExpense={addExpense} />
 
+      <ExpenseSearch onSearch={setFilter} />
+
       <button onClick={handleReset}>
         Reset Data
       </button>
@@ -43,6 +51,7 @@ function Home() {
         <ExpenseItem
           key={expense.id}
           expense={expense}
+          categories={categories}
         />
       ))}
 

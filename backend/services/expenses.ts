@@ -4,8 +4,32 @@ import { db } from "../src/prisma/db.ts";
 
 const expensesFile = "data/expenses.json";
 
-export async function getAllExpenses() {
-  return await db.orm.public.Expense.all();
+export interface ExpenseFilter {
+  amount?: number;
+  payerId?: number;
+  categoryId?: number;
+
+}
+
+export async function getAllExpenses(filter?: ExpenseFilter) {
+  let expenses = await db.orm.public.Expense.all();
+
+  if (filter?.amount !== undefined) {
+    const minAmount = filter.amount;
+    expenses = expenses.filter((expense) => expense.amount >= minAmount);
+  }
+
+  if (filter?.payerId !== undefined) {
+    const payerId = filter.payerId;
+    expenses = expenses.filter((expense) => expense.payerId === payerId);
+  }
+
+  if (filter?.categoryId !== undefined) {
+    const categoryId = filter.categoryId;
+    expenses = expenses.filter((expense) => expense.categoryId === categoryId);
+  }
+
+  return expenses;
 }
 
 export async function addExpense(expense: NewExpense) {
@@ -15,6 +39,7 @@ export async function addExpense(expense: NewExpense) {
     description: expense.description,
     amount: expense.amount,
     payerId: expense.payerId,
+    categoryId: expense.categoryId ?? null,
   });
 
   for (const userId of expense.participants ?? []) {

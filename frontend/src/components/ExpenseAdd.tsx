@@ -2,12 +2,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { NewExpense, ExpenseFormValues } from "../types/Expense";
 import { ExpenseFormSchema } from "../types/Expense";
+import useCategories from "../hooks/useCategories";
 
 interface ExpenseAddProps {
   addExpense: (expense: NewExpense) => void;
 }
 
 function ExpenseAdd({ addExpense }: ExpenseAddProps) {
+  const { categories } = useCategories();
   const {
     register,
     handleSubmit,
@@ -17,6 +19,7 @@ function ExpenseAdd({ addExpense }: ExpenseAddProps) {
     resolver: zodResolver(ExpenseFormSchema),
     defaultValues: {
       payerId: 1,
+      categoryId: null,
       date: new Date().toISOString().slice(0, 10),
       description: "",
       amount: undefined,
@@ -28,6 +31,7 @@ function ExpenseAdd({ addExpense }: ExpenseAddProps) {
       date: data.date,
       description: data.description,
       payerId: data.payerId,
+      categoryId: data.categoryId ?? null,
       amount: data.amount,
       participants: [1, 2], // provisoire : Alice et Bob participent toujours
     };
@@ -49,6 +53,24 @@ function ExpenseAdd({ addExpense }: ExpenseAddProps) {
           </select>
         </label>
         {errors.payerId && <p>{errors.payerId.message}</p>}
+
+        <br />
+
+        <label>
+          Category:
+          <select
+            {...register("categoryId", {
+              setValueAs: (v) => (v === "" || v == null ? null : Number(v)),
+            })}
+          >
+            <option value="">No category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <br />
 
